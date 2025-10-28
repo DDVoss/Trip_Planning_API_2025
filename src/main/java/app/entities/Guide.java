@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Getter
 @NoArgsConstructor
 @Entity
@@ -39,9 +38,26 @@ public class Guide {
     @Column(name = "years_of_experience", nullable = false)
     private Integer yearsOfExperience;
 
-    @OneToMany
-    @JoinColumn(name = "guide_id")
+    @OneToMany(mappedBy = "guide", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Trip> trips = new HashSet<>();
+
+
+    public void setTrip(Set<Trip> trips)    {
+        if (trips != null) {
+            this.trips = trips;
+            for (Trip trip : trips) {
+                trip.setGuide(this);
+            }
+        }
+    }
+
+
+    public void addTrip(Trip trip)  {
+        if (trip != null) {
+            this.trips.add(trip);
+            trip.setGuide(this);
+        }
+    }
 
     public Guide(String name, String email, String phone, Integer yearsOfExperience) {
         this.name = name;
@@ -57,3 +73,4 @@ public class Guide {
         this.yearsOfExperience = guideDTO.getYearsOfExperience();
     }
 }
+

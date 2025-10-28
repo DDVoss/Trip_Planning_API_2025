@@ -3,13 +3,11 @@ package app.daos.impl;
 import app.daos.IDAO;
 import app.dtos.TripDTO;
 import app.entities.Trip;
-import app.enums.Category;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
@@ -64,8 +62,8 @@ public class TripDAO implements IDAO<TripDTO, Integer>  {
             em.getTransaction().begin();
             Trip trip = em.find(Trip.class, integer);
             trip.setName(tripDTO.getName());
-            trip.setDeparture(tripDTO.getDeparture());
-            trip.setArrival(tripDTO.getArrival());
+            trip.setStart(tripDTO.getStart());
+            trip.setEnd(tripDTO.getEnd());
             trip.setPrice(tripDTO.getPrice());
             trip.setLocation(tripDTO.getLocation());
             trip.setCategory(tripDTO.getCategory());

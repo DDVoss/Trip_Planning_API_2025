@@ -1,6 +1,7 @@
 package app.routes;
 
 import app.controllers.impl.TripController;
+import app.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -12,11 +13,11 @@ public class TripRoutes {
     protected EndpointGroup getRoutes() {
 
         return () -> {
-           get("/", tripController::readAll);
-           get("/{id}", tripController::read);
-           post("/", tripController::create);
-           put("/{id}", tripController::update);
-           delete("/{id}", tripController::delete);
+           get("/", tripController::readAll, Role.ANYONE);
+           get("/{id}", tripController::read, Role.ANYONE);
+           post("/", tripController::create, Role.USER);
+           put("/{id}", tripController::update, Role.USER);
+           delete("/{id}", tripController::delete, Role.ADMIN);
         };
     }
 }

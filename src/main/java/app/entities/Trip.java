@@ -2,13 +2,13 @@ package app.entities;
 
 import app.dtos.TripDTO;
 import app.enums.Category;
-import app.entities.Guide;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
@@ -27,12 +27,12 @@ public class Trip {
     private String name;
 
     @Setter
-    @Column(name = "departure", nullable = false, length = 100)
-    private LocalDateTime departure;
+    @Column(name = "start", nullable = false, length = 100)
+    private LocalDateTime start;
 
     @Setter
-    @Column(name = "arrival", nullable = false, length = 100)
-    private LocalDateTime arrival;
+    @Column(name = "end", nullable = false, length = 100)
+    private LocalDateTime end;
 
     @Setter
     @Column(name = "location", nullable = false, length = 200)
@@ -52,11 +52,20 @@ public class Trip {
     @JoinColumn(name = "guide_id", nullable = false)
     private Guide guide;
 
+    public void assignGuide(Guide guide) {
+        if (this.guide != null) {
+            this.guide.getTrips().remove(this);
+        }
+        this.guide = guide;
+        if (guide != null) {
+            guide.getTrips().add(this);
+        }
+    }
 
-    public Trip(String name, LocalDateTime departure, LocalDateTime arrival, double location, double price, Guide guide, Category category) {
+    public Trip(String name, LocalDateTime start, LocalDateTime end, double location, double price, Guide guide, Category category) {
         this.name = name;
-        this.departure = departure;
-        this.arrival = arrival;
+        this.start = start;
+        this.end = end;
         this.location = location;
         this.price = price;
         this.guide = guide;
@@ -66,10 +75,31 @@ public class Trip {
     public Trip(TripDTO tripDTO) {
         this.id = tripDTO.getId();
         this.name = tripDTO.getName();
-        this.departure = tripDTO.getDeparture();
-        this.arrival = tripDTO.getArrival();
+        this.start = tripDTO.getStart();
+        this.end = tripDTO.getEnd();
         this.location = tripDTO.getLocation();
         this.price = tripDTO.getPrice();
         this.category = tripDTO.getCategory();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o == null || getClass() != o.getClass())) return false;
+
+        Trip trip = (Trip) o;
+        return Objects.equals(name, trip.name) &&
+                Objects.equals(start, trip.start) &&
+                Objects.equals(end, trip.end) &&
+                Objects.equals(location, trip.location) &&
+                Objects.equals(price, trip.price) &&
+                Objects.equals(category, trip.category) &&
+                Objects.equals(guide, trip.guide);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, start, end, location, price, category, guide);
     }
 }
