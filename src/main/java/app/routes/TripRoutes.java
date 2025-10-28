@@ -13,11 +13,12 @@ public class TripRoutes {
     protected EndpointGroup getRoutes() {
 
         return () -> {
-           get("/", tripController::readAll, Role.ANYONE);
-           get("/{id}", tripController::read, Role.ANYONE);
-           post("/", tripController::create, Role.USER);
-           put("/{id}", tripController::update, Role.USER);
-           delete("/{id}", tripController::delete, Role.ADMIN);
+            post("/populate", tripController::populate, Role.ANYONE);
+            get("/", tripController::readAll, Role.ANYONE);
+            get("/{id}", tripController::read, Role.ANYONE);
+            post("/", tripController::create, Role.USER);
+            put("/{id}", tripController::update, Role.USER);
+            delete("/{id}", tripController::delete, Role.ADMIN);
         };
     }
 }

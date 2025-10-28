@@ -108,4 +108,10 @@ public class TripController implements IController<TripDTO, Integer> {
                 .check(h -> h.getCategory() != null, "Trip category must be set")
                 .get();
     }
+
+    public void populate(Context ctx) {
+        dao.populate();
+        ctx.res().setStatus(200);
+        ctx.json("Trip data populated");
+    }
 }

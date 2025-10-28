@@ -23,7 +23,7 @@ Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-    "role": "ADMIN"
+  "role": "ADMIN"
 }
 
 ### 3.a Refresh JWT token after role change
@@ -38,72 +38,104 @@ POST {{url}}/auth/login/
     client.log("Refreshed jwt_token after role assignment");
 %}
 
-
-### 4. Populate the database with initial data
-GET {{url}}/advice/populate/
+### 4 Populate database with sample data
+POST {{url}}/trip/populate
 Authorization: Bearer {{jwt_token}}
 
-### 5. Test GET all advice
-GET {{url}}/advice
+### 5. Test GET all trips
+GET {{url}}/trip
 Authorization: Bearer {{jwt_token}}
 
 > {%
-    client.log("GET all advice response: " + JSON.stringify(response.body));
-    client.log("Number of advice entries: " + response.body.length);
+    client.log("GET all trips response: " + JSON.stringify(response.body));
+    client.log("Number of trip entries: " + response.body.length);
 %}
 
-### 6. GET random advice
-GET {{url}}/advice/random
+### 6. Test GET specific trip by ID
+GET {{url}}/trip/1
 Authorization: Bearer {{jwt_token}}
 
-### 7. Create new advice and capture its ID
-POST {{url}}/advice
+### 7. Create new trip and capture its ID
+POST {{url}}/trip
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "adviceText": "Test advice content.",
-  "category": "Relationships",
-  "rating": 5
+  "name": "Test Beach Trip",
+  "start": "2026-08-15T09:00:00",
+  "end": "2026-08-15T17:00:00",
+  "location": 55.6761,
+  "price": 299.99,
+  "category": "Beach",
+  "guide": {
+    "id": 1
+  }
 }
 > {%
-    // Adjust path based on your actual response structure
-    const id = response.body.advice?.adviceId || response.body.id || response.body.adviceId;
-    client.global.set("advice_id", id);
-    client.log("Captured advice_id: " + id);
-
-    if (!id) {
-        client.log("ERROR: Could not extract ID from response: " + JSON.stringify(response.body));
-    }
+    const id = response.body.id;
+    client.global.set("trip_id", id);
+    client.log("Captured trip_id: " + id);
 %}
 
-### 8. Test GET specific advice by ID
-GET {{url}}/advice/{{advice_id}}
-Authorization: Bearer {{jwt_token}}
-
-### 9. Update the created advice
-PUT {{url}}/advice/{{advice_id}}
+### 8. Update the created trip
+PUT {{url}}/trip/{{trip_id}}
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "adviceText": "Test advice content - updated.",
-  "category": "Relationships",
-  "rating": 5
+  "name": "Updated Beach Trip",
+  "start": "2026-08-15T09:00:00",
+  "end": "2026-08-15T18:00:00",
+  "location": 55.6761,
+  "price": 349.99,
+  "category": "Beach"
 }
 
-### 10. Delete the created advice
-DELETE {{url}}/advice/{{advice_id}}
+### 9. Delete the created trip
+DELETE {{url}}/trip/{{trip_id}}
 Authorization: Bearer {{jwt_token}}
 
-### 11. Verify deletion by attempting to GET the deleted advice
-GET {{url}}/advice/{{advice_id}}
+### 10. Verify deletion
+GET {{url}}/trip/{{trip_id}}
 Authorization: Bearer {{jwt_token}}
 
-### 12. Wipe all advice entries
-DELETE {{url}}/advice/wipe
+### 11. Test GET all guides
+GET {{url}}/guide
 Authorization: Bearer {{jwt_token}}
 
->%
-    client.log("All advice entries wiped from the database.");
+### 12. Test GET specific guide by ID
+GET {{url}}/guide/1
+Authorization: Bearer {{jwt_token}}
+
+### 13. Create new guide
+POST {{url}}/guide
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "New Guide",
+  "email": "newguide@example.com",
+  "phone": "12345678901",
+  "yearsOfExperience": 3
+}
+> {%
+    const id = response.body.id;
+    client.global.set("guide_id", id);
+    client.log("Captured guide_id: " + id);
 %}
+
+### 14. Update guide
+PUT {{url}}/guide/{{guide_id}}
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Updated Guide Name",
+  "email": "updated@example.com",
+  "phone": "98765432109",
+  "yearsOfExperience": 5
+}
+
+### 15. Delete guide
+DELETE {{url}}/guide/{{guide_id}}
+Authorization: Bearer {{jwt_token}}
