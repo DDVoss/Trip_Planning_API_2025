@@ -55,6 +55,17 @@ public class TripDAO implements IDAO<TripDTO, Integer>  {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Trip trip = new Trip(tripDTO);
+
+            // Handle guide assignment
+            if (tripDTO.getGuide() != null && tripDTO.getGuide().getId() != null) {
+                Guide guide = em.find(Guide.class, tripDTO.getGuide().getId());
+                if (guide != null) {
+                    trip.setGuide(guide);
+                } else {
+                    throw new IllegalArgumentException("Guide with id " + tripDTO.getGuide().getId() + " not found");
+                }
+            }
+
             em.persist(trip);
             em.getTransaction().commit();
             return new TripDTO(trip);

@@ -66,16 +66,18 @@ Authorization: Bearer {{jwt_token}}
   "end": "2026-08-15T17:00:00",
   "location": 55.6761,
   "price": 299.99,
-  "category": "Beach",
   "guide": {
     "id": 1
-  }
+  },
+  "category": "Beach"
 }
 > {%
+    client.log("Full response body: " + JSON.stringify(response.body));
     const id = response.body.id;
     client.global.set("trip_id", id);
     client.log("Captured trip_id: " + id);
 %}
+
 
 ### 8. Update the created trip
 PUT {{url}}/trip/{{trip_id}}
@@ -83,11 +85,14 @@ Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "name": "Updated Beach Trip",
+  "name": "Test Beach Trip",
   "start": "2026-08-15T09:00:00",
-  "end": "2026-08-15T18:00:00",
+  "end": "2026-08-15T17:00:00",
   "location": 55.6761,
-  "price": 349.99,
+  "price": 299.99,
+  "guide": {
+    "id": 1
+  },
   "category": "Beach"
 }
 

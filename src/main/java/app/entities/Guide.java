@@ -67,6 +67,7 @@ public class Guide {
     }
 
     public Guide (GuideDTO guideDTO) {
+        this.id = guideDTO.getId();
         this.name = guideDTO.getName();
         this.email = guideDTO.getEmail();
         this.phone = guideDTO.getPhone();

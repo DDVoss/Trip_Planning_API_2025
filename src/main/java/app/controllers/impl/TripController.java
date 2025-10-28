@@ -101,13 +101,14 @@ public class TripController implements IController<TripDTO, Integer> {
     public TripDTO validateEntity(Context ctx) {
         return ctx.bodyValidator(TripDTO.class)
                 .check(h -> h.getName() != null && !h.getName().isEmpty(), "Trip name must be set")
-                .check(h -> h.getStart() != null && !h.getStart().isBefore(h.getEnd()), "Trip departure must be set and before arrival")
-                .check(h -> h.getEnd() != null && !h.getEnd().isAfter(h.getStart()), "Trip arrival must be set and after departure")
+                .check(h -> h.getStart() != null && h.getStart().isBefore(h.getEnd()), "Trip start must be before end")
+                .check(h -> h.getEnd() != null && h.getEnd().isAfter(h.getStart()), "Trip end must be after start")
                 .check(h -> h.getLocation() >= 0, "Trip location must be non-negative")
                 .check(h -> h.getPrice() >= 0, "Trip price must be non-negative")
                 .check(h -> h.getCategory() != null, "Trip category must be set")
                 .get();
     }
+
 
     public void populate(Context ctx) {
         dao.populate();
