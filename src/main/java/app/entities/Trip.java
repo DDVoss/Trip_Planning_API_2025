@@ -27,11 +27,11 @@ public class Trip {
     private String name;
 
     @Setter
-    @Column(name = "start", nullable = false, length = 100)
+    @Column(name = "start_time", nullable = false, length = 100)
     private LocalDateTime start;
 
     @Setter
-    @Column(name = "end", nullable = false, length = 100)
+    @Column(name = "end_time", nullable = false, length = 100)
     private LocalDateTime end;
 
     @Setter

@@ -22,7 +22,7 @@ public class TripDTO {
     private double location;
     private double price;
     private Category category;
-    private Set<GuideDTO> guides = new HashSet<>();
+    private GuideDTO guide;
 
     public TripDTO(Trip trip)   {
         this.id = trip.getId();
@@ -32,6 +32,7 @@ public class TripDTO {
         this.location = trip.getLocation();
         this.price = trip.getPrice();
         this.category = trip.getCategory();
+        this.guide = trip.getGuide() != null ? new GuideDTO(trip.getGuide()) : null;
     }
 
 }
