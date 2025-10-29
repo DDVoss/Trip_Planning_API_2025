@@ -96,23 +96,27 @@ Authorization: Bearer {{jwt_token}}
   "category": "Beach"
 }
 
-### 9. Delete the created trip
+### 9. Assign a guide to the created trip
+PUT {{url}}/trip/assign/{{trip_id}}/guide/1
+Authorization: Bearer {{jwt_token}}
+
+### 10. Delete the created trip
 DELETE {{url}}/trip/{{trip_id}}
 Authorization: Bearer {{jwt_token}}
 
-### 10. Verify deletion
+### 11. Verify deletion
 GET {{url}}/trip/{{trip_id}}
 Authorization: Bearer {{jwt_token}}
 
-### 11. Test GET all guides
+### 12. Test GET all guides
 GET {{url}}/guide
 Authorization: Bearer {{jwt_token}}
 
-### 12. Test GET specific guide by ID
+### 13. Test GET specific guide by ID
 GET {{url}}/guide/1
 Authorization: Bearer {{jwt_token}}
 
-### 13. Create new guide
+### 14. Create new guide
 POST {{url}}/guide
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
@@ -129,7 +133,7 @@ Authorization: Bearer {{jwt_token}}
     client.log("Captured guide_id: " + id);
 %}
 
-### 14. Update guide
+### 15. Update guide
 PUT {{url}}/guide/{{guide_id}}
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
@@ -141,6 +145,14 @@ Authorization: Bearer {{jwt_token}}
   "yearsOfExperience": 5
 }
 
-### 15. Delete guide
+### 16. Delete guide
 DELETE {{url}}/guide/{{guide_id}}
+Authorization: Bearer {{jwt_token}}
+
+### 17. Get total price of all trips
+GET {{url}}/trip/guide/totalprice
+Authorization: Bearer {{jwt_token}}
+
+### 18. Get trips by category
+GET {{url}}/trip?category=City
 Authorization: Bearer {{jwt_token}}

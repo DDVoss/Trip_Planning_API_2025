@@ -4,6 +4,8 @@ import app.config.HibernateConfig;
 import app.controllers.IController;
 import app.daos.impl.TripDAO;
 import app.dtos.TripDTO;
+import app.entities.Trip;
+import app.enums.Category;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -38,16 +40,22 @@ public class TripController implements IController<TripDTO, Integer> {
 
     @Override
     public void readAll(Context ctx) {
-        // Request
-        List<TripDTO> tripDTOList = dao.readAll();
+        String categoryParam = ctx.queryParam("category");
 
-        // Response
-        if (tripDTOList != null && !tripDTOList.isEmpty()) {
-            ctx.res().setStatus(200);
-            ctx.json(tripDTOList, TripDTO.class);
+        if (categoryParam != null && !categoryParam.isEmpty())  {
+            getTripsByCategory(ctx);
         } else {
-            ctx.res().setStatus(404);
-            ctx.json("No trips found");
+            // Request
+            List<TripDTO> tripDTOList = dao.readAll();
+
+            // Response
+            if (tripDTOList != null && !tripDTOList.isEmpty()) {
+                ctx.res().setStatus(200);
+                ctx.json(tripDTOList, TripDTO.class);
+            } else {
+                ctx.res().setStatus(404);
+                ctx.json("No trips found");
+            }
         }
     }
 
@@ -114,5 +122,59 @@ public class TripController implements IController<TripDTO, Integer> {
         dao.populate();
         ctx.res().setStatus(200);
         ctx.json("Trip data populated");
+    }
+
+    public void assignGuideToTrip(Context ctx) {
+        // Request
+        int tripId = ctx.pathParamAsClass("tripId", Integer.class).check(this::validatePrimaryKey, "Not a valid trip id").get();
+        int guideId = ctx.pathParamAsClass("guideId", Integer.class).get();
+
+        // Assign guide to trip
+        boolean success = dao.AssignGuideToTrip(tripId, guideId);
+
+        // Response
+        if (success) {
+            ctx.res().setStatus(200);
+            ctx.json("Guide assigned to trip successfully");
+        } else {
+            ctx.res().setStatus(404);
+            ctx.json("Trip or Guide not found");
+        }
+    }
+
+    public void getTotalPriceOfTrips(Context ctx) {
+        double totalPrice = dao.findTotalPriceForTrips();
+
+        if (totalPrice >= 0) {
+            ctx.res().setStatus(200);
+            ctx.json("Total price of all trips: " + totalPrice);
+        } else {
+            ctx.res().setStatus(500);
+            ctx.json("Error calculating total price");
+        }
+    }
+
+    public void getTripsByCategory(Context ctx) {
+        // Request
+        String categoryParam = ctx.queryParam("category");
+
+        try {
+            Category category = Category.valueOf(categoryParam);
+
+            // DTO
+            List<TripDTO> trips = dao.findAllTripsByCategory(category);
+
+            //Response
+            if (trips != null && !trips.isEmpty()) {
+                ctx.res().setStatus(200);
+                ctx.json(trips, TripDTO.class);
+            } else {
+                ctx.res().setStatus(404);
+                ctx.json("No trips found for category: " + category);
+            }
+        } catch (IllegalArgumentException e) {
+            ctx.res().setStatus(400);
+            ctx.json("Invalid category: " + categoryParam);
+        }
     }
 }

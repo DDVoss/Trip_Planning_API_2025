@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -109,6 +110,48 @@ public class TripDAO implements IDAO<TripDTO, Integer>  {
         }
     }
 
+    public boolean AssignGuideToTrip(Integer tripId, Integer guideId)   {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            Trip trip = em.find(Trip.class, tripId);
+            Guide guide = em.find(Guide.class, guideId);
+
+            if (trip == null || guide == null) {
+                em.getTransaction().commit();
+                return false;
+            }
+
+            trip.assignGuide(guide);
+            em.merge(trip);
+            em.getTransaction().commit();
+            return true;
+        }
+    }
+
+    public double findTotalPriceForTrips()    {
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery <Double> query = em.createQuery("SELECT SUM(t.price) FROM Trip t", Double.class);
+            Double totalPrice = query.getSingleResult();
+
+            if (totalPrice != null) {
+                return totalPrice;
+            } else {
+                return 0.0;
+            }
+        }
+    }
+
+    public List<TripDTO> findAllTripsByCategory(Category category)  {
+        try (EntityManager em = emf.createEntityManager())  {
+            TypedQuery <TripDTO> query = em.createQuery(
+                    "SELECT new app.dtos.TripDTO(t) FROM Trip t WHERE t.category = :category", TripDTO.class);
+            query.setParameter("category", category);
+            return query.getResultList();
+        }
+    }
+
+
     public void populate()  {
         try (EntityManager em = emf.createEntityManager())  {
             em.getTransaction().begin();
@@ -130,7 +173,6 @@ public class TripDAO implements IDAO<TripDTO, Integer>  {
 
             em.getTransaction().commit();
         }
-
     }
 
     @NotNull

@@ -15,7 +15,7 @@ public class GuideRoutes {
             get("/{id}", guideController::read, Role.ANYONE);
             post("/", guideController::create, Role.USER);
             put("/{id}", guideController::update, Role.USER);
-            delete("/{id}", guideController::delete, Role.ADMIN);
+            delete("/{id}", guideController::delete, Role.USER);
         };
     }
 }

@@ -52,6 +52,15 @@ public class Trip {
     @JoinColumn(name = "guide_id", nullable = false)
     private Guide guide;
 
+    public void assignGuide(Guide guide) {
+        if (this.guide != null) {
+            this.guide.getTrips().remove(this);
+        }
+        this.guide = guide;
+        if (guide != null) {
+            guide.getTrips().add(this);
+        }
+    }
 
 
     public Trip(String name, LocalDateTime start, LocalDateTime end, double location, double price, Guide guide, Category category) {
